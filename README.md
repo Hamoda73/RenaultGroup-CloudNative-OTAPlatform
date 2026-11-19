@@ -33,19 +33,19 @@ The system is split into three logical planes to isolate trust boundaries and li
 ```mermaid
 flowchart LR
     subgraph Control["Control plane"]
-        UI[React Admin UI]
+        UI["React Admin UI"]
     end
-    subgraph Orch["Orchestration plane (GCP)"]
-        LB[HTTP(S) Load Balancer] --> NEG[Serverless NEG]
-        NEG --> API[Go backend<br/>Cloud Run]
-        API -. localhost .- LLM[Ollama + Llama 3<br/>sidecar container]
-        API --> FS[(Firestore)]
-        API -->|signed URLs| GCS[(Cloud Storage)]
+    subgraph Orch["Orchestration plane - GCP"]
+        LB["HTTPS Load Balancer"] --> NEG["Serverless NEG"]
+        NEG --> API["Go backend<br/>Cloud Run"]
+        API -. localhost .- LLM["Ollama + Llama 3<br/>sidecar container"]
+        API --> FS[("Firestore")]
+        API -->|signed URLs| GCS[("Cloud Storage")]
     end
     subgraph Exec["Execution plane"]
-        SIM[Rust vehicle simulator<br/>on AOSP Cuttlefish]
+        SIM["Rust vehicle simulator<br/>on AOSP Cuttlefish"]
     end
-    OKTA[Okta] -. OIDC .-> UI
+    OKTA["Okta"] -. OIDC .-> UI
     UI -->|Bearer token| LB
     SIM -->|poll / report| LB
     SIM -->|direct download| GCS
@@ -83,7 +83,7 @@ flowchart LR
 |---|---|
 | Backend | Go, Docker (multi-stage builds) |
 | Frontend | React |
-| Cloud | GCP: Cloud Run, Firestore, Cloud Storage, VPC, IAM, HTTP(S) Load Balancing, Serverless NEG, Artifact Registry, Secret Manager |
+| Cloud | GCP: Cloud Run, Firestore, Cloud Storage, VPC, IAM, HTTPS Load Balancing, Serverless NEG, Artifact Registry, Secret Manager |
 | Auth | Okta, OIDC |
 | Simulation | AOSP Cuttlefish, Rust |
 | AI | Llama 3, Ollama |
